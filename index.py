@@ -3,6 +3,8 @@
 import requests
 import json
 
+from PrintFunc import printData
+
 queryParams = [('apikey', 'PWNs0VAtZYOJUqDR1FTpXY5DG5r2CRJ0'), ('details', 'true')]
 
 resp = requests.request(
@@ -14,11 +16,21 @@ cookies=None, hooks=None, json=None)
 r = json.loads(resp.text)
 
 for i in r:
-    print(i['EnglishName'] + ', ' + i['Country']['EnglishName'])
-    print(i['GeoPosition']['Elevation']['Metric']['Value'], end=' ')
-    print('m')
-    print(i['Temperature']['Metric']['Value'], end=' ')
-    print('\xb0C',end='  (')
-    print(i['Temperature']['Imperial']['Value'], end=' ')
-    print('\xb0F)')
-    print('\n')
+    printData(i)
+
+maxTempCity = r[0]
+minTempCity = r[0]
+for i in r:
+    temp = i['Temperature']['Metric']['Value']
+    maxTemp = maxTempCity['Temperature']['Metric']['Value']
+    minTemp = minTempCity['Temperature']['Metric']['Value']
+    if temp > maxTemp:
+        maxTempCity = i
+    elif temp < minTemp:
+        minTempCity = i
+
+print('Hottest:')
+printData(maxTempCity)
+
+print('Coldest:')
+printData(minTempCity)
