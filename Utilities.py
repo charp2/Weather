@@ -8,3 +8,8 @@ def printData(i):
     print('\xb0F)')
     print('\n')
     return
+
+def shiftList(shiftFrom, l):
+    for x in range(len(l)-1, shiftFrom, -1):
+        l[x] = l[x-1]
+    return l

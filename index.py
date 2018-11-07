@@ -3,7 +3,8 @@
 import requests
 import json
 
-from PrintFunc import printData
+from Utilities import printData
+from Utilities import shiftList
 
 queryParams = [('apikey', 'PWNs0VAtZYOJUqDR1FTpXY5DG5r2CRJ0'), ('details', 'true')]
 
@@ -15,22 +16,30 @@ cookies=None, hooks=None, json=None)
 
 r = json.loads(resp.text)
 
-for i in r:
-    printData(i)
+maxTempCities = r[0:5]
+minTempCities = r[0:5]
 
-maxTempCity = r[0]
-minTempCity = r[0]
 for i in r:
     temp = i['Temperature']['Metric']['Value']
-    maxTemp = maxTempCity['Temperature']['Metric']['Value']
-    minTemp = minTempCity['Temperature']['Metric']['Value']
-    if temp > maxTemp:
-        maxTempCity = i
-    elif temp < minTemp:
-        minTempCity = i
+
+    for j in range(0, len(maxTempCities)):
+        maxTemp = maxTempCities[j]['Temperature']['Metric']['Value']
+        if temp > maxTemp:
+            maxTempCities = shiftList(j, maxTempCities)
+            maxTempCities[j] = i
+            break
+
+    for j in range(0, len(minTempCities)):
+        minTemp = minTempCities[j]['Temperature']['Metric']['Value']
+        if temp < minTemp:
+            minTempCities = shiftList(j, minTempCities)
+            minTempCities[j] = i
+            break
 
 print('Hottest:')
-printData(maxTempCity)
+for maxTempCity in maxTempCities:
+    printData(maxTempCity)
 
 print('Coldest:')
-printData(minTempCity)
+for minTempCity in minTempCities:
+    printData(minTempCity)
